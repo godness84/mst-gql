@@ -19,7 +19,7 @@ const as = (self: any) => (self as unknown) as MessageModelType
  * MessageModel
  */
 export const MessageModel = MessageModelBase.views(self => ({
-  get isLikedByMe() {
+  get isLikedByMe(): boolean {
     return as(self).likes.includes(self.store.me)
   }
 })).actions(self => {
@@ -42,7 +42,7 @@ export const MessageModel = MessageModelBase.views(self => ({
     },
     loadReplies() {
       if (!loadReplyQuery) {
-        loadReplyQuery = self.store.loadMessages(0, 100, self.id)
+        loadReplyQuery = self.store.loadMessages("", 100, self.id)
       } else {
         loadReplyQuery.refetch()
       }

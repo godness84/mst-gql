@@ -1,11 +1,16 @@
 import { Instance, types } from "mobx-state-tree"
+import { IObservableArray } from "mobx"
 import { RootStoreBase, RootStoreBaseRefsType } from "./RootStore.base"
-import { MessageModel } from "./MessageModel"
+import { MessageModel, MessageModelType } from "./MessageModel"
 import { selectFromMessage } from "./MessageModel.base"
+import { UserModelType } from "./UserModel"
 
 /* The TypeScript type of an instance of RootStore */
 export interface RootStoreType extends Instance<typeof RootStore.Type> {}
 export interface RootStoreType extends RootStoreBaseRefsType {}
+export interface RootStoreType {
+  sortedMessages: IObservableArray<MessageModelType>
+}
 
 /* Helper function to cast self argument to a RootStore instance */
 const as = (self: any) => (self as unknown) as RootStoreType
@@ -22,10 +27,13 @@ export const RootStore = RootStoreBase.props({
   // The store itself does store Messages in loading order,
   // so we use an additional collection of references, to preserve the order as
   // it should be, regardless whether we are loading new or old messages.
-  sortedMessages: types.optional(types.array(types.reference(MessageModel)), [])
+  sortedMessages: types.optional(
+    types.array(types.reference(MessageModel as any)),
+    []
+  )
 })
   .views(self => ({
-    get me() {
+    get me(): UserModelType {
       return as(self).users.get("mweststrate")
     }
   }))
