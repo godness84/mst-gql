@@ -2,6 +2,7 @@ import { Instance, types } from "mobx-state-tree"
 import { RootStoreBase, RootStoreBaseRefsType } from "./RootStore.base"
 import { MessageModel } from "./MessageModel"
 import { selectFromMessage } from "./MessageModel.base"
+import { UserModelType } from "./UserModel"
 
 /* The TypeScript type of an instance of RootStore */
 export interface RootStoreType extends Instance<typeof RootStore.Type> {}
@@ -25,7 +26,7 @@ export const RootStore = RootStoreBase.props({
   sortedMessages: types.optional(types.array(types.reference(MessageModel)), [])
 })
   .views(self => ({
-    get me() {
+    get me(): UserModelType {
       return as(self).users.get("mweststrate")
     }
   }))

@@ -1,4 +1,5 @@
 import { Instance } from "mobx-state-tree"
+import { Query } from "mst-gql"
 import { MessageModelBase, MessageModelBaseRefsType } from "./MessageModel.base"
 
 /* A graphql query fragment builders for MessageModel */
@@ -19,14 +20,14 @@ const as = (self: any) => (self as unknown) as MessageModelType
  * MessageModel
  */
 export const MessageModel = MessageModelBase.views(self => ({
-  get isLikedByMe() {
+  get isLikedByMe(): boolean {
     return as(self).likes.includes(self.store.me)
   }
 })).actions(self => {
-  let loadReplyQuery: ReturnType<typeof self.store.loadMessages>
+  let loadReplyQuery: Query<{ messages: MessageModelType[] }>
 
   return {
-    like() {
+    like(): Query<{ like: MessageModelType }> {
       return self.store.mutateLike(
         {
           msg: self.id,
@@ -42,7 +43,7 @@ export const MessageModel = MessageModelBase.views(self => ({
     },
     loadReplies() {
       if (!loadReplyQuery) {
-        loadReplyQuery = self.store.loadMessages(0, 100, self.id)
+        loadReplyQuery = self.store.loadMessages("", 100, self.id)
       } else {
         loadReplyQuery.refetch()
       }
